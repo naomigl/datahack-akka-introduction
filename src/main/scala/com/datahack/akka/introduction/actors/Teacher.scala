@@ -1,6 +1,6 @@
 package com.datahack.akka.introduction.actors
 
-import akka.actor.Actor
+import akka.actor.{Actor, ActorLogging}
 import com.datahack.akka.introduction.actors.Teacher.{Advice, AskAdvice, IDoNotUnderstand}
 
 object Teacher {  // Companion object con mensajes
@@ -11,7 +11,9 @@ object Teacher {  // Companion object con mensajes
 
 }
 
-class Teacher extends Actor {
+class Teacher extends Actor with ActorLogging {
+
+  log.debug(s"${self.path} actor created")
 
   val advices: Map[String, String] = Map[String, String](
     "History" -> "History Advice",
@@ -23,7 +25,7 @@ class Teacher extends Actor {
 
     case AskAdvice(topic) =>
       val response = advices.get(topic).map(advice => Advice(advice)).getOrElse(IDoNotUnderstand)
-      println(response)
+      log.info(response.toString)
       sender ! response
   }
 }
